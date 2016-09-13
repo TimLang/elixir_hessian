@@ -1,1 +1,1 @@
-%{"hessian_erl": {:git, "https://github.com/TimLang/hessian_erl.git", "8d994cb3569d2128bc1b0767c0736aad809bf61a", []}}
+%{"hessian_erl": {:git, "https://github.com/TimLang/hessian_erl.git", "d30cae9bb602da3e4b3f808c82f43667797f92ba", []}}
