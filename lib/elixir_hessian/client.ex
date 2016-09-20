@@ -13,23 +13,25 @@ defmodule ElixirHessian.Client do
     convert (:hessian.call(to_char_list(method), Enum.map(params, &(custom_to_char_list(&1))), to_char_list(url)))
   end
 
-  def convert(array) when is_list(array) do
-    Enum.map(array, fn(item) -> convert(item) end)
+
+ def convert(list) when is_list(list) and length(list) > 0 do
+    case list |> List.first do
+      {_, _} ->
+        Enum.reduce(list, %{}, fn(tuple, acc) ->
+          {key, value} = tuple
+          Map.put(acc, key, convert(value))
+        end)
+      _ ->
+        list
+    end
   end
 
-
-  def convert(array) when is_tuple(array) do
-    {h, t} = array
-    Map.put(%{}, h, convert(t))
+  def convert(tuple) when is_tuple(tuple) do
+    {key, value} = tuple
+    Enum.into([{key, convert(value)}], %{})
   end
 
-  def convert(array) when (array == :null) do
-    nil
-  end
-
-  def convert(array) do
-    array
-  end
+  def convert(value), do: value
 
   defp custom_to_char_list(arg) when is_binary(arg) do
     to_char_list(arg)
