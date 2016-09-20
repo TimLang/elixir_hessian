@@ -13,12 +13,14 @@ defmodule ElixirHessian.Client do
     convert (:hessian.call(to_char_list(method), Enum.map(params, &(custom_to_char_list(&1))), to_char_list(url)))
   end
 
-  def convert(array) when is_tuple(hd(array)) do
-    Enum.into(array, %{})
+  def convert(array) when is_list(array) do
+    Enum.map(array, fn(item) -> convert(item) end)
   end
 
-  def convert(array) when is_list(hd(array)) do
-    Enum.map(array, fn(item) -> convert(item) end)
+
+  def convert(array) when is_tuple(array) do
+    {h, t} = array
+    Map.put(%{}, h, convert(t))
   end
 
   def convert(array) do
