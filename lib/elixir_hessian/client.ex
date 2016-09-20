@@ -23,6 +23,10 @@ defmodule ElixirHessian.Client do
     Map.put(%{}, h, convert(t))
   end
 
+  def convert(array) when (array == :null) do
+    nil
+  end
+
   def convert(array) do
     array
   end
