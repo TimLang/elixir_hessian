@@ -1,12 +1,36 @@
 
 defmodule ElixirHessian.Client do
-  
+
   def start_link do
     :hessian.start_link()
   end
 
-  def request url, method, params \\ [] do
-    :hessian.call(to_char_list(method), Enum.map(params, &(to_char_list(&1))), to_char_list(url)) 
+  def register_record class_name, class_fields, record do
+    :hessian.register_record(class_name, class_fields, record) 
   end
 
+  def request url, method, params \\ [] do
+    convert (:hessian.call(to_char_list(method), Enum.map(params, &(custom_to_char_list(&1))), to_char_list(url)))
+  end
+
+  def convert(array) when is_tuple(hd(array)) do
+    Enum.into(array, %{})
+  end
+
+  def convert(array) when is_list(hd(array)) do
+    Enum.map(array, fn(item) -> convert(item) end)
+  end
+
+  def convert(array) do
+    array
+  end
+
+  defp custom_to_char_list(arg) when is_binary(arg) do
+    to_char_list(arg)
+  end
+
+  defp custom_to_char_list(arg) do
+    arg
+  end
 end
+
